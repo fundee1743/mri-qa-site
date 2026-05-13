@@ -1,0 +1,5 @@
+/* intentionally minimal — layout handled inline in App.jsx */
+body {
+  margin: 0;
+  padding: 0;
+}
