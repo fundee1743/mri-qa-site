@@ -2,98 +2,65 @@ import { useState, useEffect } from "react";
 
 // ============================================================
 // SEGMENT 1 — COLOR THEME
-// Edit these hex values to change the whole site's color scheme
 // ============================================================
 const G = {
-  50:  "#f1f8f2",  // page background
-  100: "#d6eeda",  // light green (number badges, borders)
-  200: "#a8d8ae",  // medium border color
-  400: "#5aab65",  // icons, chevrons
-  600: "#2e7d32",  // primary buttons, active filters
-  800: "#1b5e20",  // headings, dark text
+  50:  "#f1f8f2",
+  100: "#d6eeda",
+  200: "#a8d8ae",
+  400: "#5aab65",
+  600: "#2e7d32",
+  800: "#1b5e20",
 };
 
 // ============================================================
 // SEGMENT 2 — DEFAULT Q&A DATA
-// These are the questions shown when the site first loads.
-// Add, remove, or edit questions here.
-// Each item: { id (unique number), q (question), cat (category), a (answer) }
 // ============================================================
 const DEFAULT_QA = [
-  {
-    id: 1,
-    cat: "ทั่วไป",
-    q: "MRI คืออะไร?",
-    a: "MRI (Magnetic Resonance Imaging) คือการตรวจด้วยคลื่นแม่เหล็กไฟฟ้าและคลื่นวิทยุ ไม่มีรังสีเอกซ์ใดๆ สร้างภาพอวัยวะภายในได้อย่างละเอียดชัดเจน โดยเฉพาะสมอง ไขสันหลัง ข้อต่อ และเนื้อเยื่ออ่อน",
-  },
-  {
-    id: 2,
-    cat: "ทั่วไป",
-    q: "MRI ใช้เวลานานแค่ไหน?",
-    a: "ขึ้นอยู่กับอวัยวะที่ตรวจ โดยทั่วไป 20–60 นาที บางส่วนอาจนานถึง 90 นาที เช่น MRI ทั้งร่างกาย หรือในรายที่ต้องฉีดสีเพิ่มเติม ผู้ป่วยควรนอนนิ่งตลอดการตรวจ",
-  },
-  {
-    id: 3,
-    cat: "การเตรียมตัว",
-    q: "ต้องเตรียมตัวอย่างไรก่อน MRI?",
-    a: "โดยทั่วไปไม่ต้องงดน้ำงดอาหาร ยกเว้นกรณีที่ต้องฉีดสีหรือตรวจช่องท้อง ต้องถอดสิ่งของโลหะทุกชนิด ได้แก่ นาฬิกา กุญแจ เข็มขัด เครื่องประดับ และแจ้งเจ้าหน้าที่หากมีอุปกรณ์ฝังในร่างกาย",
-  },
-  {
-    id: 4,
-    cat: "ความปลอดภัย",
-    q: "MRI อันตรายไหม?",
-    a: "MRI ปลอดภัยมาก ไม่ใช้รังสีไอออไนซ์ สามารถทำซ้ำได้หลายครั้งโดยไม่เป็นอันตราย เสียงดังระหว่างตรวจมาจากแม่เหล็กที่ทำงาน แต่หากมีโลหะฝังในร่างกายต้องแจ้งแพทย์ก่อนเสมอ",
-  },
-  {
-    id: 5,
-    cat: "ความปลอดภัย",
-    q: "ทำไมต้องถอดโลหะออก?",
-    a: "เครื่อง MRI ใช้สนามแม่เหล็กแรงสูง โลหะจะถูกดูดเข้าหาเครื่องด้วยแรงมหาศาล อาจทำให้บาดเจ็บได้ และยังทำให้ภาพบิดเบี้ยวไม่ชัดเจน",
-  },
-  {
-    id: 6,
-    cat: "ทั่วไป",
-    q: "MRI กับ CT Scan ต่างกันอย่างไร?",
-    a: "MRI ใช้คลื่นแม่เหล็ก ไม่มีรังสี เห็นเนื้อเยื่ออ่อนดีมาก เช่น สมอง เส้นประสาท หมอนรองกระดูก ส่วน CT Scan ใช้รังสีเอกซ์ เห็นกระดูกดี ตรวจเร็วกว่า เหมาะกับกรณีฉุกเฉิน",
-  },
-  {
-    id: 7,
-    cat: "ผลการตรวจ",
-    q: "ผลตรวจออกเมื่อไหร่?",
-    a: "โดยทั่วไป 1–3 วันทำการ กรณีเร่งด่วนอาจได้ผลในวันเดียวกัน รังสีแพทย์จะอ่านและแปลผล จากนั้นแพทย์ที่ดูแลจะนัดอธิบายผลให้ฟัง",
-  },
-  {
-    id: 8,
-    cat: "ผลการตรวจ",
-    q: "MRI ราคาเท่าไหร่โดยประมาณ?",
-    a: "โรงพยาบาลรัฐ: ประมาณ 3,000–8,000 บาท (สิทธิประกันสังคม/บัตรทองอาจครอบคลุม) โรงพยาบาลเอกชน: ประมาณ 8,000–25,000 บาทขึ้นไป ควรสอบถามก่อนนัดหมาย",
-  },
+  { id: 1, cat: "ทั่วไป",        q: "MRI คืออะไร?",                  a: "MRI (Magnetic Resonance Imaging) คือการตรวจด้วยคลื่นแม่เหล็กไฟฟ้าและคลื่นวิทยุ ไม่มีรังสีเอกซ์ใดๆ สร้างภาพอวัยวะภายในได้อย่างละเอียดชัดเจน โดยเฉพาะสมอง ไขสันหลัง ข้อต่อ และเนื้อเยื่ออ่อน" },
+  { id: 2, cat: "ทั่วไป",        q: "MRI ใช้เวลานานแค่ไหน?",         a: "ขึ้นอยู่กับอวัยวะที่ตรวจ โดยทั่วไป 20–60 นาที บางส่วนอาจนานถึง 90 นาที เช่น MRI ทั้งร่างกาย หรือในรายที่ต้องฉีดสีเพิ่มเติม ผู้ป่วยควรนอนนิ่งตลอดการตรวจ" },
+  { id: 3, cat: "การเตรียมตัว",  q: "ต้องเตรียมตัวอย่างไรก่อน MRI?", a: "โดยทั่วไปไม่ต้องงดน้ำงดอาหาร ยกเว้นกรณีที่ต้องฉีดสีหรือตรวจช่องท้อง ต้องถอดสิ่งของโลหะทุกชนิด ได้แก่ นาฬิกา กุญแจ เข็มขัด เครื่องประดับ และแจ้งเจ้าหน้าที่หากมีอุปกรณ์ฝังในร่างกาย" },
+  { id: 4, cat: "ความปลอดภัย",  q: "MRI อันตรายไหม?",                a: "MRI ปลอดภัยมาก ไม่ใช้รังสีไอออไนซ์ สามารถทำซ้ำได้หลายครั้งโดยไม่เป็นอันตราย เสียงดังระหว่างตรวจมาจากแม่เหล็กที่ทำงาน แต่หากมีโลหะฝังในร่างกายต้องแจ้งแพทย์ก่อนเสมอ" },
+  { id: 5, cat: "ความปลอดภัย",  q: "ทำไมต้องถอดโลหะออก?",           a: "เครื่อง MRI ใช้สนามแม่เหล็กแรงสูง โลหะจะถูกดูดเข้าหาเครื่องด้วยแรงมหาศาล อาจทำให้บาดเจ็บได้ และยังทำให้ภาพบิดเบี้ยวไม่ชัดเจน" },
+  { id: 6, cat: "ทั่วไป",        q: "MRI กับ CT Scan ต่างกันอย่างไร?", a: "MRI ใช้คลื่นแม่เหล็ก ไม่มีรังสี เห็นเนื้อเยื่ออ่อนดีมาก เช่น สมอง เส้นประสาท หมอนรองกระดูก ส่วน CT Scan ใช้รังสีเอกซ์ เห็นกระดูกดี ตรวจเร็วกว่า เหมาะกับกรณีฉุกเฉิน" },
+  { id: 7, cat: "ผลการตรวจ",    q: "ผลตรวจออกเมื่อไหร่?",            a: "โดยทั่วไป 1–3 วันทำการ กรณีเร่งด่วนอาจได้ผลในวันเดียวกัน รังสีแพทย์จะอ่านและแปลผล จากนั้นแพทย์ที่ดูแลจะนัดอธิบายผลให้ฟัง" },
+  { id: 8, cat: "ผลการตรวจ",    q: "MRI ราคาเท่าไหร่โดยประมาณ?",     a: "โรงพยาบาลรัฐ: ประมาณ 3,000–8,000 บาท (สิทธิประกันสังคม/บัตรทองอาจครอบคลุม) โรงพยาบาลเอกชน: ประมาณ 8,000–25,000 บาทขึ้นไป ควรสอบถามก่อนนัดหมาย" },
 ];
 
 // ============================================================
-// SEGMENT 3 — CATEGORIES
-// Add or rename categories here (must match cat values in SEGMENT 2)
-// CAT_COLORS: bg = badge background, color = badge text color
+// SEGMENT 3 — DEFAULT CATEGORIES & COLORS
+// These are only used on first load. After that, categories
+// are managed in the Admin panel and saved to localStorage.
 // ============================================================
-const CATS = ["ทั่วไป", "ความปลอดภัย", "การเตรียมตัว", "ผลการตรวจ"];
+const DEFAULT_CATS = ["ทั่วไป", "ความปลอดภัย", "การเตรียมตัว", "ผลการตรวจ"];
 
-const CAT_COLORS = {
+const DEFAULT_CAT_COLORS = {
   "ทั่วไป":       { bg: "#e8f5e9", color: "#2e7d32" },
   "ความปลอดภัย": { bg: "#fff3e0", color: "#e65100" },
   "การเตรียมตัว": { bg: "#e3f2fd", color: "#1565c0" },
   "ผลการตรวจ":   { bg: "#f3e5f5", color: "#6a1b9a" },
 };
 
+// Color palette cycled through when adding new categories
+const COLOR_PALETTE = [
+  { bg: "#e8f5e9", color: "#2e7d32" },
+  { bg: "#fff3e0", color: "#e65100" },
+  { bg: "#e3f2fd", color: "#1565c0" },
+  { bg: "#f3e5f5", color: "#6a1b9a" },
+  { bg: "#fce4ec", color: "#880e4f" },
+  { bg: "#e0f2f1", color: "#004d40" },
+  { bg: "#fff8e1", color: "#f57f17" },
+  { bg: "#f1f8e9", color: "#33691e" },
+  { bg: "#e8eaf6", color: "#283593" },
+  { bg: "#fbe9e7", color: "#bf360c" },
+];
+
 // ============================================================
 // SEGMENT 4 — ADMIN PASSWORD
-// Password is stored as a GitHub secret (VITE_ADMIN_PASS).
-// Never hardcode it here. Change it in GitHub → Settings → Secrets.
 // ============================================================
 const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || "";
 
 // ============================================================
 // SEGMENT 5 — BUTTON BASE STYLE
-// Base style for all buttons. Pass overrides via the extra object.
 // ============================================================
 const btn = (extra = {}) => ({
   border: "1.5px solid " + G[200],
@@ -114,40 +81,54 @@ const btn = (extra = {}) => ({
 export default function App() {
 
   // ----------------------------------------------------------
-  // SEGMENT 6 — APP STATE (internal — no need to edit)
+  // SEGMENT 6 — APP STATE
   // ----------------------------------------------------------
-  const [qaList, setQaList]           = useState([]);
-  const [loaded, setLoaded]           = useState(false);
-  const [search, setSearch]           = useState("");
-  const [filterCat, setFilterCat]     = useState("ทั้งหมด");
-  const [openIds, setOpenIds]         = useState({});
-  const [view, setView]               = useState("public");
-  const [showLogin, setShowLogin]     = useState(false);
-  const [pass, setPass]               = useState("");
-  const [passErr, setPassErr]         = useState(false);
-  const [attempts, setAttempts]       = useState(0);
-  const [lockedUntil, setLockedUntil] = useState(null);
-  const [editItem, setEditItem]       = useState(null);
-  const [form, setForm]               = useState({ q: "", cat: "ทั่วไป", a: "" });
-  const [formErr, setFormErr]         = useState("");
+  const [qaList, setQaList]             = useState([]);
+  const [cats, setCats]                 = useState([]);
+  const [catColors, setCatColors]       = useState({});
+  const [loaded, setLoaded]             = useState(false);
+  const [search, setSearch]             = useState("");
+  const [filterCat, setFilterCat]       = useState("ทั้งหมด");
+  const [openIds, setOpenIds]           = useState({});
+  const [view, setView]                 = useState("public");
+  const [adminTab, setAdminTab]         = useState("qa"); // "qa" | "cats"
+  const [showLogin, setShowLogin]       = useState(false);
+  const [pass, setPass]                 = useState("");
+  const [passErr, setPassErr]           = useState(false);
+  const [attempts, setAttempts]         = useState(0);
+  const [lockedUntil, setLockedUntil]   = useState(null);
+  const [editItem, setEditItem]         = useState(null);
+  const [form, setForm]                 = useState({ q: "", cat: "", a: "" });
+  const [formErr, setFormErr]           = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [toast, setToast]             = useState("");
+  const [newCat, setNewCat]             = useState("");
+  const [catErr, setCatErr]             = useState("");
+  const [toast, setToast]               = useState("");
 
   // ----------------------------------------------------------
   // SEGMENT 7 — DATA LOADING & HASH-BASED ADMIN TRIGGER
-  // Loads Q&A from localStorage on first visit.
-  // Admin login form appears only when URL ends with #admin.
   // ----------------------------------------------------------
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("mri-qa-list");
-      if (stored) {
-        setQaList(JSON.parse(stored));
-      } else {
-        setQaList(DEFAULT_QA);
-        localStorage.setItem("mri-qa-list", JSON.stringify(DEFAULT_QA));
-      }
+      const storedQA   = localStorage.getItem("mri-qa-list");
+      const storedCats = localStorage.getItem("mri-cat-list");
+      const storedColors = localStorage.getItem("mri-cat-colors");
+
+      const loadedCats   = storedCats   ? JSON.parse(storedCats)   : DEFAULT_CATS;
+      const loadedColors = storedColors ? JSON.parse(storedColors) : DEFAULT_CAT_COLORS;
+      const loadedQA     = storedQA     ? JSON.parse(storedQA)     : DEFAULT_QA;
+
+      setCats(loadedCats);
+      setCatColors(loadedColors);
+      setQaList(loadedQA);
+      setForm(f => ({ ...f, cat: loadedCats[0] || "" }));
+
+      if (!storedQA)     localStorage.setItem("mri-qa-list",    JSON.stringify(DEFAULT_QA));
+      if (!storedCats)   localStorage.setItem("mri-cat-list",   JSON.stringify(DEFAULT_CATS));
+      if (!storedColors) localStorage.setItem("mri-cat-colors", JSON.stringify(DEFAULT_CAT_COLORS));
     } catch {
+      setCats(DEFAULT_CATS);
+      setCatColors(DEFAULT_CAT_COLORS);
       setQaList(DEFAULT_QA);
     }
     setLoaded(true);
@@ -158,9 +139,18 @@ export default function App() {
     return () => window.removeEventListener("hashchange", checkHash);
   }, []);
 
-  const save = (list) => {
+  const saveQA = (list) => {
     setQaList(list);
     try { localStorage.setItem("mri-qa-list", JSON.stringify(list)); } catch {}
+  };
+
+  const saveCats = (list, colors) => {
+    setCats(list);
+    setCatColors(colors);
+    try {
+      localStorage.setItem("mri-cat-list",   JSON.stringify(list));
+      localStorage.setItem("mri-cat-colors", JSON.stringify(colors));
+    } catch {}
   };
 
   const showToast = (msg) => {
@@ -178,8 +168,7 @@ export default function App() {
 
   // ----------------------------------------------------------
   // SEGMENT 8 — ADMIN LOGIN LOGIC
-  // Locks out for 60 seconds after 5 failed attempts.
-  // -------------------------------------------------------
+  // ----------------------------------------------------------
   const isLocked = lockedUntil && Date.now() < lockedUntil;
   const lockSecondsLeft = isLocked ? Math.ceil((lockedUntil - Date.now()) / 1000) : 0;
 
@@ -198,17 +187,14 @@ export default function App() {
       setAttempts(next);
       setPassErr(true);
       setPass("");
-      if (next >= 5) {
-        setLockedUntil(Date.now() + 60_000);
-        setAttempts(0);
-      }
+      if (next >= 5) { setLockedUntil(Date.now() + 60_000); setAttempts(0); }
     }
   };
 
   // ----------------------------------------------------------
-  // SEGMENT 9 — ADD / EDIT / DELETE LOGIC
+  // SEGMENT 9 — Q&A ADD / EDIT / DELETE LOGIC
   // ----------------------------------------------------------
-  const openAdd  = () => { setEditItem(null); setForm({ q: "", cat: "ทั่วไป", a: "" }); setFormErr(""); };
+  const openAdd  = () => { setEditItem(null); setForm({ q: "", cat: cats[0] || "", a: "" }); setFormErr(""); };
   const openEdit = (item) => { setEditItem(item); setForm({ q: item.q, cat: item.cat, a: item.a }); setFormErr(""); };
 
   const handleSave = () => {
@@ -221,15 +207,43 @@ export default function App() {
       list = [...qaList, { id: Date.now(), ...form }];
       showToast("✅ เพิ่มคำถามสำเร็จ");
     }
-    save(list);
+    saveQA(list);
     setEditItem(null);
-    setForm({ q: "", cat: "ทั่วไป", a: "" });
+    setForm({ q: "", cat: cats[0] || "", a: "" });
   };
 
   const handleDelete = (id) => {
-    save(qaList.filter(x => x.id !== id));
+    saveQA(qaList.filter(x => x.id !== id));
     setDeleteConfirm(null);
     showToast("🗑️ ลบสำเร็จ");
+  };
+
+  // ----------------------------------------------------------
+  // SEGMENT 9B — CATEGORY ADD / DELETE LOGIC
+  // ----------------------------------------------------------
+  const handleAddCat = () => {
+    const name = newCat.trim();
+    if (!name) { setCatErr("กรุณากรอกชื่อหมวดหมู่"); return; }
+    if (cats.includes(name)) { setCatErr("มีหมวดหมู่นี้อยู่แล้ว"); return; }
+
+    const color = COLOR_PALETTE[cats.length % COLOR_PALETTE.length];
+    const newCats   = [...cats, name];
+    const newColors = { ...catColors, [name]: color };
+    saveCats(newCats, newColors);
+    setNewCat("");
+    setCatErr("");
+    showToast(`✅ เพิ่มหมวดหมู่ "${name}" สำเร็จ`);
+  };
+
+  const handleDeleteCat = (name) => {
+    const inUse = qaList.filter(x => x.cat === name).length;
+    if (inUse > 0) { setCatErr(`ไม่สามารถลบได้ — มี ${inUse} คำถามใช้หมวดหมู่นี้อยู่`); return; }
+    const newCats   = cats.filter(c => c !== name);
+    const newColors = { ...catColors };
+    delete newColors[name];
+    saveCats(newCats, newColors);
+    setCatErr("");
+    showToast(`🗑️ ลบหมวดหมู่ "${name}" สำเร็จ`);
   };
 
   if (!loaded) return (
@@ -246,8 +260,6 @@ export default function App() {
 
       {/* --------------------------------------------------------
           SEGMENT 10 — TOAST NOTIFICATION
-          Small pop-up message shown after add / edit / delete.
-          Edit the duration in showToast() in SEGMENT 9 above.
           -------------------------------------------------------- */}
       {toast && (
         <div style={{ position: "fixed", top: 16, left: "50%", transform: "translateX(-50%)", background: G[800], color: "white", padding: "10px 24px", borderRadius: 24, fontSize: 14, zIndex: 9999, fontFamily: "'Sarabun',sans-serif", boxShadow: "0 4px 16px rgba(0,0,0,0.18)" }}>
@@ -257,14 +269,13 @@ export default function App() {
 
       {/* --------------------------------------------------------
           SEGMENT 11 — HERO BANNER
-          Edit: title text, background color.
+          Edit: title text, background color (G[600] in SEGMENT 1)
           -------------------------------------------------------- */}
       <div style={{ background: G[600], padding: "20px 24px", color: "white", position: "relative" }}>
         {/* -- SEGMENT 11B: Hero title -- */}
         <h1 style={{ fontSize: 18, fontWeight: 600, color: "white", margin: 0, letterSpacing: "0.01em" }}>
           คำถาม-คำตอบเกี่ยวกับ MRI
         </h1>
-
         {/* -- SEGMENT 11D: Back button (admin only) -- */}
         {view === "admin" && (
           <button onClick={() => { setView("public"); window.location.hash = ""; }}
@@ -278,16 +289,13 @@ export default function App() {
 
         {/* --------------------------------------------------------
             SEGMENT 12 — ADMIN LOGIN FORM
-            Visible only when URL = yoursite.com/#admin
-            Edit: title, subtitle text, button label.
-            Lockout settings are in SEGMENT 8 (handleLogin).
+            Visible only at yoursite.com/#admin
             -------------------------------------------------------- */}
         {showLogin && view !== "admin" && (
           <div style={{ maxWidth: 360, margin: "40px auto", background: "white", borderRadius: 16, border: `1.5px solid ${G[200]}`, padding: 28 }}>
             {/* -- SEGMENT 12A: Login title -- */}
             <h2 style={{ fontSize: 18, fontWeight: 600, color: G[800], marginBottom: 4 }}>เข้าสู่ระบบ Admin</h2>
             <p style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>สำหรับเจ้าของเว็บไซต์เท่านั้น</p>
-
             {/* -- SEGMENT 12B: Lockout message -- */}
             {isLocked ? (
               <div style={{ background: "#fff3e0", border: "1.5px solid #ffcc80", borderRadius: 8, padding: "14px 16px", textAlign: "center" }}>
@@ -309,7 +317,6 @@ export default function App() {
                     </p>
                   )}
                 </div>
-
                 {/* -- SEGMENT 12D: Login button -- */}
                 <button onClick={handleLogin} style={{ ...btn({ background: G[600], color: "white", border: "none", width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 15 }) }}>
                   เข้าสู่ระบบ
@@ -321,81 +328,148 @@ export default function App() {
 
         {/* --------------------------------------------------------
             SEGMENT 13 — ADMIN PANEL
-            Only visible after successful login.
             -------------------------------------------------------- */}
         {view === "admin" && (
           <div style={{ marginTop: 24 }}>
 
-            {/* -- SEGMENT 13A: Admin header + Add button -- */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
-              <div>
-                <h2 style={{ fontSize: 18, fontWeight: 600, color: G[800] }}>จัดการ Q&A</h2>
-                <p style={{ fontSize: 13, color: "#777" }}>ทั้งหมด {qaList.length} คำถาม</p>
-              </div>
-              <button onClick={openAdd} style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14 }) }}>
-                + เพิ่มคำถามใหม่
-              </button>
+            {/* -- SEGMENT 13A: Admin tab switcher -- */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 20, borderBottom: `2px solid ${G[100]}`, paddingBottom: 0 }}>
+              {[{ key: "qa", label: "จัดการ Q&A" }, { key: "cats", label: "จัดการหมวดหมู่" }].map(tab => (
+                <button key={tab.key} onClick={() => { setAdminTab(tab.key); setEditItem(null); setForm({ q: "", cat: cats[0] || "", a: "" }); setCatErr(""); }}
+                  style={{ padding: "9px 20px", fontSize: 14, fontFamily: "'Sarabun',sans-serif", fontWeight: 600, cursor: "pointer", border: "none", borderBottom: adminTab === tab.key ? `2.5px solid ${G[600]}` : "2.5px solid transparent", background: "transparent", color: adminTab === tab.key ? G[600] : "#999", marginBottom: -2, transition: "all 0.15s" }}>
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            {/* -- SEGMENT 13B: Add / Edit form -- */}
-            {(editItem !== null || form.q !== "" || form.a !== "") && (
-              <div style={{ background: "white", border: `2px solid ${G[400]}`, borderRadius: 14, padding: 22, marginBottom: 20 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: G[800], marginBottom: 16 }}>
-                  {editItem ? "✏️ แก้ไขคำถาม" : "➕ เพิ่มคำถามใหม่"}
-                </h3>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>คำถาม *</label>
-                  <input value={form.q} onChange={e => setForm(p => ({ ...p, q: e.target.value }))}
-                    placeholder="พิมพ์คำถามที่นี่..."
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", boxSizing: "border-box" }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>หมวดหมู่</label>
-                  <select value={form.cat} onChange={e => setForm(p => ({ ...p, cat: e.target.value }))}
-                    style={{ padding: "9px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", background: "white" }}>
-                    {CATS.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div style={{ marginBottom: 14 }}>
-                  <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>คำตอบ *</label>
-                  <textarea value={form.a} onChange={e => setForm(p => ({ ...p, a: e.target.value }))}
-                    rows={4} placeholder="พิมพ์คำตอบที่นี่..."
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", resize: "vertical", lineHeight: 1.7, boxSizing: "border-box" }} />
-                </div>
-                {formErr && <p style={{ color: "#e53935", fontSize: 12, marginBottom: 10 }}>{formErr}</p>}
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={handleSave} style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 8 }) }}>
-                    {editItem ? "บันทึกการแก้ไข" : "บันทึก"}
+            {/* ======== TAB: Q&A MANAGEMENT ======== */}
+            {adminTab === "qa" && (
+              <div>
+                {/* -- SEGMENT 13B-header: Header + Add button -- */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+                  <p style={{ fontSize: 13, color: "#777" }}>ทั้งหมด {qaList.length} คำถาม</p>
+                  <button onClick={openAdd} style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 14 }) }}>
+                    + เพิ่มคำถามใหม่
                   </button>
-                  <button onClick={() => { setEditItem(null); setForm({ q: "", cat: "ทั่วไป", a: "" }); setFormErr(""); }}
-                    style={btn()}>ยกเลิก</button>
                 </div>
-              </div>
-            )}
 
-            {/* -- SEGMENT 13C: Q&A list (admin view) -- */}
-            {editItem === null && form.q === "" && form.a === "" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {qaList.map((item, i) => (
-                  <div key={item.id} style={{ background: "white", borderRadius: 10, border: `1px solid ${G[100]}`, padding: "13px 16px", display: "flex", alignItems: "flex-start", gap: 12 }}>
-                    <div style={{ minWidth: 26, height: 26, borderRadius: "50%", background: G[100], color: G[800], fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 1 }}>{i + 1}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-                        <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a" }}>{item.q}</span>
-                        <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: CAT_COLORS[item.cat]?.bg, color: CAT_COLORS[item.cat]?.color }}>{item.cat}</span>
-                      </div>
-                      <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6 }}>{item.a.substring(0, 80)}{item.a.length > 80 ? "..." : ""}</p>
+                {/* -- SEGMENT 13B: Add / Edit form -- */}
+                {(editItem !== null || form.q !== "" || form.a !== "") && (
+                  <div style={{ background: "white", border: `2px solid ${G[400]}`, borderRadius: 14, padding: 22, marginBottom: 20 }}>
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: G[800], marginBottom: 16 }}>
+                      {editItem ? "✏️ แก้ไขคำถาม" : "➕ เพิ่มคำถามใหม่"}
+                    </h3>
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>คำถาม *</label>
+                      <input value={form.q} onChange={e => setForm(p => ({ ...p, q: e.target.value }))}
+                        placeholder="พิมพ์คำถามที่นี่..."
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", boxSizing: "border-box" }} />
                     </div>
-                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                      <button onClick={() => openEdit(item)} style={{ ...btn({ padding: "6px 12px", fontSize: 12, color: G[600] }) }}>✏️ แก้ไข</button>
-                      <button onClick={() => setDeleteConfirm(item.id)} style={{ ...btn({ padding: "6px 12px", fontSize: 12, color: "#e53935", borderColor: "#ffcdd2" }) }}>🗑️ ลบ</button>
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>หมวดหมู่</label>
+                      <select value={form.cat} onChange={e => setForm(p => ({ ...p, cat: e.target.value }))}
+                        style={{ padding: "9px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", background: "white" }}>
+                        {cats.map(c => <option key={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div style={{ marginBottom: 14 }}>
+                      <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 5 }}>คำตอบ *</label>
+                      <textarea value={form.a} onChange={e => setForm(p => ({ ...p, a: e.target.value }))}
+                        rows={4} placeholder="พิมพ์คำตอบที่นี่..."
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", resize: "vertical", lineHeight: 1.7, boxSizing: "border-box" }} />
+                    </div>
+                    {formErr && <p style={{ color: "#e53935", fontSize: 12, marginBottom: 10 }}>{formErr}</p>}
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <button onClick={handleSave} style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 8 }) }}>
+                        {editItem ? "บันทึกการแก้ไข" : "บันทึก"}
+                      </button>
+                      <button onClick={() => { setEditItem(null); setForm({ q: "", cat: cats[0] || "", a: "" }); setFormErr(""); }} style={btn()}>
+                        ยกเลิก
+                      </button>
                     </div>
                   </div>
-                ))}
+                )}
+
+                {/* -- SEGMENT 13C: Q&A list (admin view) -- */}
+                {editItem === null && form.q === "" && form.a === "" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {qaList.map((item, i) => (
+                      <div key={item.id} style={{ background: "white", borderRadius: 10, border: `1px solid ${G[100]}`, padding: "13px 16px", display: "flex", alignItems: "flex-start", gap: 12 }}>
+                        <div style={{ minWidth: 26, height: 26, borderRadius: "50%", background: G[100], color: G[800], fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 1 }}>{i + 1}</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                            <span style={{ fontSize: 14, fontWeight: 500, color: "#1a1a1a" }}>{item.q}</span>
+                            <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 8, background: catColors[item.cat]?.bg || "#eee", color: catColors[item.cat]?.color || "#555" }}>{item.cat}</span>
+                          </div>
+                          <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6 }}>{item.a.substring(0, 80)}{item.a.length > 80 ? "..." : ""}</p>
+                        </div>
+                        <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                          <button onClick={() => openEdit(item)} style={{ ...btn({ padding: "6px 12px", fontSize: 12, color: G[600] }) }}>✏️ แก้ไข</button>
+                          <button onClick={() => setDeleteConfirm(item.id)} style={{ ...btn({ padding: "6px 12px", fontSize: 12, color: "#e53935", borderColor: "#ffcdd2" }) }}>🗑️ ลบ</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
-            {/* -- SEGMENT 13D: Delete confirmation modal -- */}
+            {/* ======== TAB: CATEGORY MANAGEMENT (SEGMENT 13E) ======== */}
+            {adminTab === "cats" && (
+              <div>
+                {/* -- SEGMENT 13E-header -- */}
+                <p style={{ fontSize: 13, color: "#777", marginBottom: 16 }}>
+                  ทั้งหมด {cats.length} หมวดหมู่ — ลบได้เฉพาะหมวดที่ไม่มีคำถามอยู่
+                </p>
+
+                {/* -- SEGMENT 13E-add: Add new category input -- */}
+                <div style={{ background: "white", border: `1.5px solid ${G[200]}`, borderRadius: 12, padding: 18, marginBottom: 20 }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: G[800], display: "block", marginBottom: 10 }}>เพิ่มหมวดหมู่ใหม่</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      value={newCat}
+                      onChange={e => { setNewCat(e.target.value); setCatErr(""); }}
+                      onKeyDown={e => e.key === "Enter" && handleAddCat()}
+                      placeholder="ชื่อหมวดหมู่..."
+                      style={{ flex: 1, padding: "9px 14px", borderRadius: 8, border: `1.5px solid ${catErr ? "#e53935" : G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", boxSizing: "border-box" }}
+                    />
+                    <button onClick={handleAddCat} style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 8, padding: "9px 18px" }) }}>
+                      + เพิ่ม
+                    </button>
+                  </div>
+                  {catErr && <p style={{ color: "#e53935", fontSize: 12, marginTop: 8 }}>{catErr}</p>}
+                </div>
+
+                {/* -- SEGMENT 13E-list: Current categories -- */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {cats.map(cat => {
+                    const count  = qaList.filter(x => x.cat === cat).length;
+                    const colors = catColors[cat] || { bg: "#eee", color: "#555" };
+                    return (
+                      <div key={cat} style={{ background: "white", borderRadius: 10, border: `1px solid ${G[100]}`, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+                        {/* Color badge preview */}
+                        <span style={{ padding: "3px 12px", borderRadius: 20, background: colors.bg, color: colors.color, fontSize: 13, fontWeight: 500 }}>
+                          {cat}
+                        </span>
+                        {/* Question count */}
+                        <span style={{ fontSize: 13, color: "#999", flex: 1 }}>
+                          {count > 0 ? `${count} คำถาม` : "ว่างอยู่"}
+                        </span>
+                        {/* Delete button */}
+                        <button
+                          onClick={() => handleDeleteCat(cat)}
+                          title={count > 0 ? `มี ${count} คำถามใช้หมวดนี้อยู่` : "ลบหมวดหมู่"}
+                          style={{ ...btn({ padding: "5px 12px", fontSize: 12, color: count > 0 ? "#bbb" : "#e53935", borderColor: count > 0 ? "#eee" : "#ffcdd2", cursor: count > 0 ? "not-allowed" : "pointer" }) }}>
+                          🗑️ ลบ
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* -- SEGMENT 13D: Delete Q&A confirmation modal -- */}
             {deleteConfirm && (
               <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
                 <div style={{ background: "white", borderRadius: 16, padding: 28, maxWidth: 320, width: "90%", textAlign: "center" }}>
@@ -414,11 +488,9 @@ export default function App() {
 
         {/* --------------------------------------------------------
             SEGMENT 14 — PUBLIC VIEW
-            What regular visitors see.
             -------------------------------------------------------- */}
         {view === "public" && (
           <div>
-
             {/* -- SEGMENT 14A: Search bar -- */}
             <div style={{ position: "relative", margin: "22px 0 16px" }}>
               <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: G[400], fontSize: 18 }}>🔍</span>
@@ -429,7 +501,7 @@ export default function App() {
 
             {/* -- SEGMENT 14B: Category filter buttons -- */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
-              {["ทั้งหมด", ...CATS].map(cat => (
+              {["ทั้งหมด", ...cats].map(cat => (
                 <button key={cat} onClick={() => setFilterCat(cat)}
                   style={{ padding: "7px 14px", borderRadius: 20, border: `1.5px solid ${filterCat === cat ? G[600] : G[200]}`, background: filterCat === cat ? G[600] : "white", color: filterCat === cat ? "white" : G[600], fontSize: 13, fontFamily: "'Sarabun',sans-serif", cursor: "pointer", fontWeight: 500, transition: "all 0.18s" }}>
                   {cat}
@@ -449,7 +521,7 @@ export default function App() {
                   <div onClick={() => toggle(item.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", cursor: "pointer" }}>
                     <div style={{ minWidth: 28, height: 28, borderRadius: "50%", background: G[100], color: G[800], fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>{i + 1}</div>
                     <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: "#1a1a1a", lineHeight: 1.4 }}>{item.q}</span>
-                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 10, background: CAT_COLORS[item.cat]?.bg, color: CAT_COLORS[item.cat]?.color, whiteSpace: "nowrap" }}>{item.cat}</span>
+                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 10, background: catColors[item.cat]?.bg || "#eee", color: catColors[item.cat]?.color || "#555", whiteSpace: "nowrap" }}>{item.cat}</span>
                     <span style={{ color: G[400], fontSize: 18, transition: "transform 0.25s", display: "inline-block", transform: openIds[item.id] ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
                   </div>
                   {openIds[item.id] && (
@@ -478,7 +550,6 @@ export default function App() {
             <p style={{ textAlign: "center", fontSize: 11, color: "#bbb", marginTop: 20 }}>
               ข้อมูลนี้ใช้เพื่อการศึกษาเท่านั้น กรุณาปรึกษาแพทย์หรือนักรังสีเทคนิคโดยตรง
             </p>
-
           </div>
         )}
       </div>
