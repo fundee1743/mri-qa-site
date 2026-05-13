@@ -257,27 +257,18 @@ export default function App() {
 
       {/* --------------------------------------------------------
           SEGMENT 11 — HERO BANNER
-          Edit: emoji (🧲), title text, subtitle text, gradient colors.
-          Gradient colors come from SEGMENT 1 (G[600], G[400]).
+          Edit: title text, background color.
           -------------------------------------------------------- */}
-      <div style={{ background: `linear-gradient(135deg, ${G[600]} 0%, #43a047 60%, ${G[400]} 100%)`, borderRadius: "0 0 24px 24px", padding: "28px 24px 22px", color: "white", textAlign: "center", position: "relative" }}>
-        {/* -- SEGMENT 11A: Hero icon -- */}
-        <div style={{ fontSize: 34, marginBottom: 6 }}>🧲</div>
-
+      <div style={{ background: G[600], padding: "20px 24px", color: "white", position: "relative" }}>
         {/* -- SEGMENT 11B: Hero title -- */}
-        <h1 style={{ fontSize: 21, fontWeight: 600, marginBottom: 4, color: "white" }}>
+        <h1 style={{ fontSize: 18, fontWeight: 600, color: "white", margin: 0, letterSpacing: "0.01em" }}>
           คำถาม-คำตอบเกี่ยวกับ MRI
         </h1>
-
-        {/* -- SEGMENT 11C: Hero subtitle -- */}
-        <p style={{ fontSize: 13, opacity: 0.88 }}>
-          รวมคำถามที่พบบ่อย ตอบโดยนักรังสีเทคนิคผู้เชี่ยวชาญ
-        </p>
 
         {/* -- SEGMENT 11D: Back button (admin only) -- */}
         {view === "admin" && (
           <button onClick={() => { setView("public"); window.location.hash = ""; }}
-            style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.4)", color: "white", borderRadius: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", fontFamily: "'Sarabun',sans-serif" }}>
+            style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", right: 16, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.4)", color: "white", borderRadius: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", fontFamily: "'Sarabun',sans-serif" }}>
             ← กลับหน้าเว็บ
           </button>
         )}
