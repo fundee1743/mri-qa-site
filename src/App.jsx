@@ -104,6 +104,9 @@ export default function App() {
   const [newCat, setNewCat]             = useState("");
   const [catErr, setCatErr]             = useState("");
   const [toast, setToast]               = useState("");
+  const [submitQ, setSubmitQ]           = useState("");
+  const [submitErr, setSubmitErr]       = useState("");
+  const [submitDone, setSubmitDone]     = useState(false);
 
   // ----------------------------------------------------------
   // SEGMENT 7 — DATA LOADING & HASH-BASED ADMIN TRIGGER
@@ -244,6 +247,26 @@ export default function App() {
     saveCats(newCats, newColors);
     setCatErr("");
     showToast(`🗑️ ลบหมวดหมู่ "${name}" สำเร็จ`);
+  };
+
+  // ----------------------------------------------------------
+  // SEGMENT 9C — VISITOR QUESTION SUBMIT LOGIC
+  // Adds the question to the Q&A list with a placeholder answer.
+  // Admin can edit it later to add a proper answer.
+  // ----------------------------------------------------------
+  const handleSubmitQuestion = () => {
+    if (!submitQ.trim()) { setSubmitErr("กรุณากรอกคำถามก่อนส่ง"); return; }
+    const newItem = {
+      id: Date.now(),
+      cat: cats[0] || "ทั่วไป",
+      q: submitQ.trim(),
+      a: "⏳ อยู่ระหว่างรอคำตอบจากผู้เชี่ยวชาญ",
+    };
+    saveQA([...qaList, newItem]);
+    setSubmitQ("");
+    setSubmitErr("");
+    setSubmitDone(true);
+    setTimeout(() => setSubmitDone(false), 3000);
   };
 
   if (!loaded) return (
@@ -533,17 +556,32 @@ export default function App() {
               ))}
             </div>
 
-            {/* -- SEGMENT 14D: Contact section -- */}
-            <div style={{ marginTop: 32, background: "white", borderRadius: 12, border: `1.5px solid ${G[200]}`, padding: 24, textAlign: "center" }}>
-              <h3 style={{ color: G[800], fontSize: 17, marginBottom: 8 }}>มีคำถามเพิ่มเติม?</h3>
-              <p style={{ color: "#666", fontSize: 14, marginBottom: 16, lineHeight: 1.7 }}>
-                หากไม่พบคำตอบที่ต้องการ สามารถส่งคำถามมาได้เลย<br />
-                ทีมนักรังสีเทคนิคยินดีให้คำแนะนำ
-              </p>
-              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-                <button style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 8, padding: "10px 22px" }) }}>📧 ส่งอีเมล</button>
-                <button style={{ ...btn({ borderColor: G[200], borderRadius: 8, color: G[600], padding: "10px 22px" }) }}>📞 โทรสอบถาม</button>
-              </div>
+            {/* -- SEGMENT 14D: Visitor question submission -- */}
+            <div style={{ marginTop: 32, background: "white", borderRadius: 12, border: `1.5px solid ${G[200]}`, padding: 24 }}>
+              <h3 style={{ color: G[800], fontSize: 16, fontWeight: 600, marginBottom: 16 }}>มีคำถามเพิ่มเติม ?</h3>
+
+              {submitDone ? (
+                <div style={{ background: G[50], border: `1.5px solid ${G[200]}`, borderRadius: 8, padding: "14px 16px", textAlign: "center" }}>
+                  <p style={{ color: G[600], fontSize: 14, fontWeight: 600 }}>✅ ส่งคำถามเรียบร้อยแล้ว</p>
+                  <p style={{ color: "#888", fontSize: 13, marginTop: 4 }}>คำถามของคุณจะปรากฏในรายการด้านบน</p>
+                </div>
+              ) : (
+                <>
+                  <textarea
+                    value={submitQ}
+                    onChange={e => { setSubmitQ(e.target.value); setSubmitErr(""); }}
+                    onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSubmitQuestion())}
+                    rows={3}
+                    placeholder="พิมพ์คำถามของคุณที่นี่..."
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${submitErr ? "#e53935" : G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", resize: "none", lineHeight: 1.7, boxSizing: "border-box", marginBottom: 10 }}
+                  />
+                  {submitErr && <p style={{ color: "#e53935", fontSize: 12, marginBottom: 8 }}>{submitErr}</p>}
+                  <button onClick={handleSubmitQuestion}
+                    style={{ ...btn({ background: G[600], color: "white", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 14 }) }}>
+                    ส่งคำถาม
+                  </button>
+                </>
+              )}
             </div>
 
             {/* -- SEGMENT 14E: Footer disclaimer -- */}
