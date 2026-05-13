@@ -24,7 +24,7 @@ const CAT_COLORS = {
   "ผลการตรวจ": { bg: "#f3e5f5", color: "#6a1b9a" },
 };
 
-const ADMIN_PASS = "mri-admin-2024";
+const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || "";
 
 const btn = (extra = {}) => ({
   border: "1.5px solid " + G[200],
@@ -46,8 +46,11 @@ export default function App() {
   const [filterCat, setFilterCat] = useState("ทั้งหมด");
   const [openIds, setOpenIds] = useState({});
   const [view, setView] = useState("public");
+  const [showLogin, setShowLogin] = useState(false);
   const [pass, setPass] = useState("");
   const [passErr, setPassErr] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState({ q: "", cat: "ทั่วไป", a: "" });
   const [formErr, setFormErr] = useState("");
@@ -67,6 +70,18 @@ export default function App() {
       setQaList(DEFAULT_QA);
     }
     setLoaded(true);
+
+    // Show login only when URL hash is #admin — invisible to regular visitors
+    const checkHash = () => {
+      if (window.location.hash === "#admin") {
+        setShowLogin(true);
+      } else {
+        setShowLogin(false);
+      }
+    };
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
   }, []);
 
   const save = (list) => {
@@ -88,9 +103,29 @@ export default function App() {
 
   const toggle = (id) => setOpenIds(p => ({ ...p, [id]: !p[id] }));
 
+  const isLocked = lockedUntil && Date.now() < lockedUntil;
+  const lockSecondsLeft = isLocked ? Math.ceil((lockedUntil - Date.now()) / 1000) : 0;
+
   const handleLogin = () => {
-    if (pass === ADMIN_PASS) { setView("admin"); setPassErr(false); setPass(""); }
-    else setPassErr(true);
+    if (isLocked) return;
+    if (pass === ADMIN_PASS) {
+      setView("admin");
+      setPassErr(false);
+      setPass("");
+      setAttempts(0);
+      setLockedUntil(null);
+      window.location.hash = "";
+      setShowLogin(false);
+    } else {
+      const next = attempts + 1;
+      setAttempts(next);
+      setPassErr(true);
+      setPass("");
+      if (next >= 5) {
+        setLockedUntil(Date.now() + 60_000);
+        setAttempts(0);
+      }
+    }
   };
 
   const openAdd = () => { setEditItem(null); setForm({ q: "", cat: "ทั่วไป", a: "" }); setFormErr(""); };
@@ -138,31 +173,45 @@ export default function App() {
         <div style={{ fontSize: 34, marginBottom: 6 }}>🧲</div>
         <h1 style={{ fontSize: 21, fontWeight: 600, marginBottom: 4, color: "white" }}>คำถาม-คำตอบเกี่ยวกับ MRI</h1>
         <p style={{ fontSize: 13, opacity: 0.88 }}>รวมคำถามที่พบบ่อย ตอบโดยนักรังสีเทคนิคผู้เชี่ยวชาญ</p>
-        <button onClick={() => view === "admin" ? setView("public") : setView("login")}
-          style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.4)", color: "white", borderRadius: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", fontFamily: "'Sarabun',sans-serif" }}>
-          {view === "admin" ? "← กลับหน้าเว็บ" : "🔐 Admin"}
-        </button>
+        {view === "admin" && (
+          <button onClick={() => { setView("public"); window.location.hash = ""; }}
+            style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.4)", color: "white", borderRadius: 8, padding: "6px 14px", fontSize: 12, cursor: "pointer", fontFamily: "'Sarabun',sans-serif" }}>
+            ← กลับหน้าเว็บ
+          </button>
+        )}
       </div>
 
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "0 16px 48px" }}>
 
-        {/* LOGIN */}
-        {view === "login" && (
+        {/* LOGIN — only visible when URL hash is #admin */}
+        {showLogin && view !== "admin" && (
           <div style={{ maxWidth: 360, margin: "40px auto", background: "white", borderRadius: 16, border: `1.5px solid ${G[200]}`, padding: 28 }}>
             <h2 style={{ fontSize: 18, fontWeight: 600, color: G[800], marginBottom: 4 }}>เข้าสู่ระบบ Admin</h2>
             <p style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>สำหรับเจ้าของเว็บไซต์เท่านั้น</p>
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 6 }}>รหัสผ่าน</label>
-              <input type="password" value={pass} onChange={e => setPass(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleLogin()}
-                placeholder="กรอกรหัสผ่าน"
-                style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${passErr ? "#e53935" : G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", boxSizing: "border-box" }} />
-              {passErr && <p style={{ color: "#e53935", fontSize: 12, marginTop: 4 }}>รหัสผ่านไม่ถูกต้อง</p>}
-            </div>
-            <button onClick={handleLogin} style={{ ...btn({ background: G[600], color: "white", border: "none", width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 15 }) }}>
-              เข้าสู่ระบบ
-            </button>
-            <p style={{ fontSize: 11, color: "#aaa", marginTop: 16, textAlign: "center" }}>รหัสผ่าน demo: mri-admin-2024</p>
+            {isLocked ? (
+              <div style={{ background: "#fff3e0", border: "1.5px solid #ffcc80", borderRadius: 8, padding: "14px 16px", textAlign: "center" }}>
+                <p style={{ color: "#e65100", fontSize: 14, fontWeight: 600 }}>🔒 ล็อคชั่วคราว</p>
+                <p style={{ color: "#e65100", fontSize: 13, marginTop: 4 }}>ลองใหม่อีกครั้งใน {lockSecondsLeft} วินาที</p>
+              </div>
+            ) : (
+              <>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 13, color: "#555", display: "block", marginBottom: 6 }}>รหัสผ่าน</label>
+                  <input type="password" value={pass} onChange={e => setPass(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleLogin()}
+                    placeholder="กรอกรหัสผ่าน"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1.5px solid ${passErr ? "#e53935" : G[200]}`, fontSize: 14, fontFamily: "'Sarabun',sans-serif", outline: "none", boxSizing: "border-box" }} />
+                  {passErr && (
+                    <p style={{ color: "#e53935", fontSize: 12, marginTop: 4 }}>
+                      รหัสผ่านไม่ถูกต้อง ({5 - attempts} ครั้งที่เหลือก่อนล็อค)
+                    </p>
+                  )}
+                </div>
+                <button onClick={handleLogin} style={{ ...btn({ background: G[600], color: "white", border: "none", width: "100%", padding: "11px 0", borderRadius: 8, fontSize: 15 }) }}>
+                  เข้าสู่ระบบ
+                </button>
+              </>
+            )}
           </div>
         )}
 
